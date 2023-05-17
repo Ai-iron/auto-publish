@@ -222,6 +222,6 @@ def is_current_date(publish_time_text):
     return publish_time.date() == now.date()
 
 
-def get_file_name():
-    now_str = datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
-    return '今日文章' + now_str
+def get_file_name(key):
+    now_str = datetime.datetime.now().strftime("_%Y_%m_%d_%H_%M_%S")
+    return '今日文章_'+key + now_str
