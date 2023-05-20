@@ -14,6 +14,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
+import uuid
+from PIL import Image
 
 cookie_file_path = './file/cookie.txt'
 
@@ -26,7 +28,11 @@ def login_wechat(relogin):
         os.remove(cookie_file_path)
     browser = webdriver.Chrome()
     browser.get("https://mp.weixin.qq.com/")
-    time.sleep(2)
+    # 等待页面加载完成
+    WebDriverWait(browser, 100).until(EC.presence_of_element_located((By.CLASS_NAME, 'login_frame')))
+    png_file = fr"./file/{uuid.uuid4()}.png"
+    browser.find_element(By.CLASS_NAME, "login_frame").screenshot(png_file)
+    # todo 发飞书消息
     print("请拿手机扫码二维码登录公众号")
     time.sleep(30)
     print("登录成功")
@@ -64,7 +70,8 @@ def get_content(ky, file_name):
     response = session.get(url=url, cookies=cookies)
     findall = re.findall(r'token=(\d+)', str(response.url))
     # 重新登陆
-    if len(findall) == 0:
+    try_times = 3
+    while len(findall) == 0 and try_times > 0:
         print("登陆失效，请重新登陆")
         login_wechat(True)
         # 重新用cookie拿token
@@ -74,8 +81,10 @@ def get_content(ky, file_name):
         response = session.get(url=url, cookies=cookies)
         findall = re.findall(r'token=(\d+)', str(response.url))
         print(findall)
+        try_times = try_times - 1
     if len(findall) == 0:
-        print("登陆失败！！")
+        print(fr"获取{ky}文章中 登陆失败！！进入下一个")
+        # todo  机器人告警
         return
     token = findall[0]
     time.sleep(2)
@@ -202,7 +211,6 @@ def get_webpage(driver, url):
 
     # 创建一个BeautifulSoup对象
     soup = BeautifulSoup(webpage_text, 'html.parser')
-
     # 查找发布时间元素，并获取文本内容
     publish_time_element = soup.find(id='publish_time')
     publish_time_text = publish_time_element.text
@@ -224,4 +232,4 @@ def is_current_date(publish_time_text):
 
 def get_file_name(key):
     now_str = datetime.datetime.now().strftime("_%Y_%m_%d_%H_%M_%S")
-    return '今日文章_'+key + now_str
+    return '今日文章_' + key + now_str
