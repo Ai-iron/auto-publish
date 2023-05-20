@@ -2,20 +2,38 @@ import json
 import logging
 
 import requests
+from requests_toolbelt import MultipartEncoder
 
-# 发送图片消息
+
+# 上传文件
+def upload(file,authorization):
+  url = "https://open.feishu.cn/open-apis/im/v1/files"
+  form = {'file_type': 'stream',
+          'file_name': file.name,
+          'file':  ('text.txt', open(file.path, 'rb'), 'text/plain')}
+  multi_form = MultipartEncoder(form)
+  headers = {
+    'Authorization': 'Bearer '+authorization, ## 获取tenant_access_token, 需要替换为实际的token
+  }
+  headers['Content-Type'] = multi_form.content_type
+  response = requests.request("POST", url, headers=headers, data=multi_form)
+  print(response.headers['X-Tt-Logid']) # for debug or oncall
+  print(response.content) # Print Response
+  return response
+
+
+# 发送文件消息
 # 接口调用限制 1000 次/分钟、50 次/秒
 def send(msg,chatId,authorization):
     url = "https://open.feishu.cn/open-apis/im/v1/messages"
-    params = {"receive_id_type": "chat_id"}
+    params = {"receive_id_type": chatId}
     msgContent = {
-        "image_key": msg
+        "file_key": msg #文件Key，可通过上传文件接口获取文件的 file_key。
     }
     req = {
         "receive_id": chatId,  # chat id  消息接收者的ID,这里是群的id
-        "msg_type": "image_key", # 图片
+        "msg_type": "file", #文件
         "content": json.dumps(msgContent)
-        # “uuid”: xxx 由开发者生成的唯一字符串序列，用于发送消息请求去重；持有相同uuid的请求1小时内至多成功发送一条消息
     }
     payload = json.dumps(req)
     headers = {
@@ -26,4 +44,3 @@ def send(msg,chatId,authorization):
     status = response.headers['X-Tt-Logid']
     if status != 0:
         logging.error("发送图片失败，错误信息："+response.content)
-

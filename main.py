@@ -5,5 +5,5 @@ from spider.task_weixin import task_job
 
 if __name__ == '__main__':
     sched = BlockingScheduler()
-    sched.add_job(task_job, 'cron', hour="11", minute="33", id='spider_weixin')
+    sched.add_job(task_job, 'cron', hour="21", minute="51", id='spider_weixin')
     sched.start()
