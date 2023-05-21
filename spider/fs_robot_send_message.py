@@ -19,14 +19,14 @@ def upload(file,authorization):
   response = requests.request("POST", url, headers=headers, data=multi_form)
   print(response.headers['X-Tt-Logid']) # for debug or oncall
   print(response.content) # Print Response
-  return response
+  return response.content
 
 
 # 发送文件消息
 # 接口调用限制 1000 次/分钟、50 次/秒
 def send(msg,chatId,authorization):
     url = "https://open.feishu.cn/open-apis/im/v1/messages"
-    params = {"receive_id_type": chatId}
+    params = {"receive_id_type": 'chat_id'}
     msgContent = {
         "file_key": msg #文件Key，可通过上传文件接口获取文件的 file_key。
     }
@@ -42,5 +42,4 @@ def send(msg,chatId,authorization):
     }
     response = requests.request("POST", url, params=params, headers=headers, data=payload)
     status = response.headers['X-Tt-Logid']
-    if status != 0:
-        logging.error("发送图片失败，错误信息："+response.content)
+    print(response.content)
