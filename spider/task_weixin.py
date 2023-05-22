@@ -29,7 +29,7 @@ def task_job():
             get_content(account, fn)
     print(f'定时任务结束{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 
-    print(f'获取爬虫的cvs内容，并发送到群流程开始-------{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+    print(f'获取爬虫的cvs内容，并把文件发送到群的流程结束-------{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 
     path = os.path.dirname(os.getcwd()) + "\\file"
 
@@ -50,13 +50,13 @@ def task_job():
     for f in files:
         if (data_string in f) and (f.endswith(".csv")):
             file_list.append(path + "\\" + f);
-            file_stream.name = data_string
+            file_stream.name = os.path.basename(path + "\\" + f)
             file_stream.path = path + "\\" + f
             file_key = upload(file_stream, authorization);
+            chat_id = data['chat_id']
             file_data = json.loads(file_key)
-            file_message = file_data['data']['file_key']
-            send(file_message, chat_id, authorization);
+            message = file_data['data']['file_key']
+            send(message, chat_id, authorization);
 
-    print(f'获取爬虫的cvs内容，并发送到群流程结束-------{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
-
+    print(f'获取爬虫的cvs内容，并把文件发送到群的流程结束-------{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 

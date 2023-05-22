@@ -10,7 +10,7 @@ def upload(file,authorization):
   url = "https://open.feishu.cn/open-apis/im/v1/files"
   form = {'file_type': 'stream',
           'file_name': file.name,
-          'file':  ('text.txt', open(file.path, 'rb'), 'text/plain')}
+          'file':  (file.name, open(file.path, 'rb'), 'text/plain')}
   multi_form = MultipartEncoder(form)
   headers = {
     'Authorization': 'Bearer '+authorization, ## 获取tenant_access_token, 需要替换为实际的token
