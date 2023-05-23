@@ -168,7 +168,8 @@ def get_content(ky, file_name):
             'type': '9'
         }
         print(fr'正在翻页：--------------{int(int(begin) / 5)}/{total_num}')
-        time.sleep(8)
+        # 3分钟
+        time.sleep(3*60)
 
         # 获取每一页文章的标题和链接地址，并写入本地文本中
         query_fakeid_response = session.get(appmsg_url, cookies=cookies, headers=header, params=query_id_data)
