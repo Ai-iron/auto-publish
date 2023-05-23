@@ -1,0 +1,10 @@
+[
+  {
+    "xiaohongshu_name": "北京本地",
+    "gzh_list": [
+      {"name":"北京市成公信息发布平台"}
+    ],
+    "xiaohongshu_admin": "ai",
+    "weixin_account_cookie": "./file/cookie1.txt"
+  }
+]

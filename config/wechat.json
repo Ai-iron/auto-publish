@@ -1,0 +1,104 @@
+[
+  {
+    "xiaohongshu_name": "北京本地",
+    "gzh_list": [
+      {"name":"北京市成公信息发布平台"},
+      {"name":"大北京早知道"},
+      {"name":"北京本地宝"},
+      {"name":"最爱大北京"},
+      {"name":"北京人社"},
+      {"name":"北京日报"},
+      {"name":"北京新闻"},
+      {"name":""},
+      {"name":""},
+      {"name":""}
+    ],
+    "xiaohongshu_admin": "ai",
+    "weixin_account_cookie": "./file/cookie1.txt"
+  },
+  {
+    "xiaohongshu_name": "ai",
+    "gzh_list": [
+      {"name":"量子位"},
+      {"name":"36kr"},
+      {"name":"虎嗅"},
+      {"name":"智东西"},
+      {"name":"三次方"},
+      {"name":"AIGC开放社区"},
+      {"name":"AI进化社"},
+      {"name":"AI前线"},
+      {"name":"机器之心"},
+      {"name":""}
+    ],
+    "xiaohongshu_admin": "xxxx",
+    "weixin_account_cookie": "./file/cookie2.txt"
+  },
+  {
+    "xiaohongshu_name": "上海本地",
+    "gzh_list": [
+      {"name":"上海公务员"},
+      {"name":"上海本地宝"},
+      {"name":"解放日报"},
+      {"name":"上海发布"},
+      {"name":"上海市招聘"},
+      {"name":""},
+      {"name":""},
+      {"name":""},
+      {"name":""},
+      {"name":""}
+    ],
+    "xiaohongshu_admin": "xxxx",
+    "weixin_account_cookie": "./file/cookie3.txt"
+  },
+  {
+    "xiaohongshu_name": "厦门本地",
+    "gzh_list": [
+      {"name":"厦门本地宝"},
+      {"name":"厦门人才网官网"},
+      {"name":"厦门日报"},
+      {"name":"厦门吃喝玩乐情报局"},
+      {"name":"厦门广电"},
+      {"name":"厦门文旅"},
+      {"name":"厦门国旅行"},
+      {"name":"厦门国企招聘"},
+      {"name":""},
+      {"name":""}
+    ],
+    "xiaohongshu_admin": "xxxx",
+    "weixin_account_cookie": "./file/cookie4.txt"
+  },
+  {
+    "xiaohongshu_name": "福州本地",
+    "gzh_list": [
+      {"name":"福州日报"},
+      {"name":"遇见福州"},
+      {"name":"福州微文明"},
+      {"name":"福州晚报"},
+      {"name":"福州本地宝"},
+      {"name":"福州365"},
+      {"name":"福州地区大学城"},
+      {"name":"中国海峡人才网"},
+      {"name":"e福州"},
+      {"name":"福州新闻"}
+    ],
+    "xiaohongshu_admin": "xxxx",
+    "weixin_account_cookie": "./file/cookie5.txt"
+  },
+  {
+    "xiaohongshu_name": "成都本地",
+    "gzh_list": [
+      {"name":"成都住建"},
+      {"name":"成都社治"},
+      {"name":"成都统计"},
+      {"name":"成都商报"},
+      {"name":"成都发布"},
+      {"name":"中国日报社四川记者站"},
+      {"name":"四川交通广播"},
+      {"name":"成都交警"},
+      {"name":"成都本地宝"},
+      {"name":"四川文旅厅"}
+    ],
+    "xiaohongshu_admin": "xxxx",
+    "weixin_account_cookie": "./file/cookie6.txt"
+  }
+]

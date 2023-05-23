@@ -19,10 +19,8 @@ from bs4 import BeautifulSoup
 import uuid
 from PIL import Image
 
-cookie_file_path = './file/cookie.txt'
 
-
-def login_wechat(relogin):
+def login_wechat(relogin, cookie_file_path):
     # 不重新登陆 存在cookie 直接用cookie
     if not relogin and os.path.exists(cookie_file_path):
         return
@@ -56,13 +54,19 @@ def login_wechat(relogin):
     browser.quit()
 
 
-def get_content(ky, file_name):
-    # ky为要爬取的公众号名称
-    url = 'https://mp.weixin.qq.com'  # 公众号主页
-    header = {
-        "HOST": "mp.weixin.qq.com",
-        "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"
-    }
+# ky为要爬取的公众号名称
+url = 'https://mp.weixin.qq.com'  # 公众号主页
+
+header = {
+    "HOST": "mp.weixin.qq.com",
+    "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36"
+}
+
+
+def get_content(item):
+    cookie_file_path = item['weixin_account_cookie']
+    # 登陆获取cookie
+    login_wechat(False, cookie_file_path)
     # 读取上一步获取到的cookies
     with open(cookie_file_path, 'r', encoding='utf-8') as f:
         cookie = f.read()
@@ -76,6 +80,7 @@ def get_content(ky, file_name):
     # 登录之后的微信公众号首页url变化为：https://mp.weixin.qq.com/cgi-bin/home?t=home/index&lang=zh_CN&token=657944522，从这里获取token信息
     response = session.get(url=url, cookies=cookies)
     findall = re.findall(r'token=(\d+)', str(response.url))
+    ky = item['xiaohongshu_name']
     # 重新登陆
     try_times = 3
     while len(findall) == 0 and try_times > 0:
@@ -94,6 +99,18 @@ def get_content(ky, file_name):
         # todo  机器人告警
         return
     token = findall[0]
+    file_name = get_file_name(ky)
+    csv_head(file_name)
+    # 获取每个公众号文章
+    for account in item['gzh_list']:
+        name = account['name']
+        if name != "":
+            get_gzh_content(token, session, cookies, ky, file_name)
+
+    return
+
+
+def get_gzh_content(token, session, cookies, ky, file_name):
     time.sleep(2)
     # 搜索微信公众号的接口地址
     search_url = 'https://mp.weixin.qq.com/cgi-bin/searchbiz?'
@@ -163,7 +180,7 @@ def get_content(ky, file_name):
     opt.add_argument('--ignore-ssl-errors')
     # 忽略无用的日志
     opt.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
-    driver = webdriver.Chrome(service=service, options=options,chrome_options=opt)
+    driver = webdriver.Chrome(service=service, options=options, chrome_options=opt)
     while total_num + 1 > 0:
         query_id_data = {
             'token': token,
@@ -180,7 +197,7 @@ def get_content(ky, file_name):
         }
         print(fr'正在翻页：--------------{int(int(begin) / 5)}/{total_num}')
         # 3分钟
-        time.sleep(3*60)
+        time.sleep(3 * 60)
 
         # 获取每一页文章的标题和链接地址，并写入本地文本中
         query_fakeid_response = session.get(appmsg_url, cookies=cookies, headers=header, params=query_id_data)
@@ -254,7 +271,7 @@ def is_current_date(publish_time_text):
     now = datetime.datetime.now()
     # 24小时内
     # return publish_time > now - datetime.timedelta(hours=24)
-    return publish_time.date()== now.date()
+    return publish_time.date() == now.date()
 
 
 def get_file_name(key):
