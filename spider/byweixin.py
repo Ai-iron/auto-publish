@@ -7,6 +7,8 @@ import random
 import requests
 import datetime
 import os
+
+import selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
@@ -104,11 +106,15 @@ def get_content(ky, file_name):
     }
     # 打开搜索微信公众号接口地址，需要传入相关参数信息如：cookies、params、headers
     search_response = session.get(search_url, cookies=cookies, headers=header, params=query_id)
+    list = search_response.json().get('list')
+    if list is None:
+        print(f'list is None rsp:{search_response.json()}')
+        return
     # 取搜索结果中的第一个公众号
-    lists = search_response.json().get('list')[0]
+    item = list[0]
     # print(lists)
     # 获取这个公众号的fakeid，后面爬取公众号文章需要此字段
-    fakeid = lists.get('fakeid')
+    fakeid = item.get('fakeid')
 
     # 微信公众号文章接口地址
     appmsg_url = 'https://mp.weixin.qq.com/cgi-bin/appmsg?'
@@ -130,6 +136,9 @@ def get_content(ky, file_name):
     appmsg_response = session.get(appmsg_url, cookies=cookies, headers=header, params=query_id_data)
     # 获取文章总数
     max_num = appmsg_response.json().get('app_msg_cnt')
+    if max_num is None:
+        print(f'max_num is None ,rsp:{appmsg_response.json()}')
+        return
     # 每页至少有5条，获取文章总的页数，爬取时需要分页爬
     total_num = int(int(max_num) / 5)
     print(fr'总页数：{total_num}--------------{ky}')
@@ -159,7 +168,8 @@ def get_content(ky, file_name):
             'type': '9'
         }
         print(fr'正在翻页：--------------{int(int(begin) / 5)}/{total_num}')
-        time.sleep(8)
+        # 3分钟
+        time.sleep(3*60)
 
         # 获取每一页文章的标题和链接地址，并写入本地文本中
         query_fakeid_response = session.get(appmsg_url, cookies=cookies, headers=header, params=query_id_data)
@@ -168,7 +178,7 @@ def get_content(ky, file_name):
             for item in fakeid_list:
                 content_link = item.get('link')
                 content_title = item.get('title')
-
+                print(f'{ky}:{content_title}')
                 seq += 1
                 datestr, content = get_webpage(driver, content_link)
                 if not is_current_date(datestr):
@@ -177,6 +187,8 @@ def get_content(ky, file_name):
                     break
                 info = [ky, content_title, content_link, content]
                 save(file_name, info)
+        else:
+            break
         begin = int(begin)
         begin += 5
         total_num -= 1
@@ -202,10 +214,12 @@ def save(file_name, info):
 def get_webpage(driver, url):
     # 打开链接
     driver.get(url)
-
-    # 等待页面加载完成
-    WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'rich_media_meta_list')))
-
+    try:
+        # 等待页面加载完成
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, 'publish_time')))
+    except selenium.common.exceptions.TimeoutException:
+        print(f"获取{url}出错")
+        return "", ""
     # 获取页面
     webpage_text = driver.page_source
 
@@ -220,14 +234,16 @@ def get_webpage(driver, url):
 
 
 def is_current_date(publish_time_text):
+    if publish_time_text == "":
+        return False
     # 将publish_time_text字符串转换成datetime对象
     publish_time = datetime.datetime.strptime(publish_time_text, '%Y-%m-%d %H:%M')
 
     # 获取当前日期时间
     now = datetime.datetime.now()
-
-    # 判断发布日期是否是当前日期
-    return publish_time.date() == now.date()
+    # 24小时内
+    # return publish_time > now - datetime.timedelta(hours=24)
+    return publish_time.date()== now.date()
 
 
 def get_file_name(key):
