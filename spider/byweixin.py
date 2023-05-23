@@ -28,7 +28,12 @@ def login_wechat(relogin):
         return
     if relogin:
         os.remove(cookie_file_path)
-    browser = webdriver.Chrome()
+    opt = webdriver.ChromeOptions()
+    opt.add_argument('--ignore-certificate-errors')
+    opt.add_argument('--ignore-ssl-errors')
+    # 忽略无用的日志
+    opt.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
+    browser = webdriver.Chrome(chrome_options=opt)
     browser.get("https://mp.weixin.qq.com/")
     # 等待页面加载完成
     WebDriverWait(browser, 100).until(EC.presence_of_element_located((By.CLASS_NAME, 'login_frame')))
@@ -152,7 +157,13 @@ def get_content(ky, file_name):
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
-    driver = webdriver.Chrome(service=service, options=options)
+
+    opt = webdriver.ChromeOptions()
+    opt.add_argument('--ignore-certificate-errors')
+    opt.add_argument('--ignore-ssl-errors')
+    # 忽略无用的日志
+    opt.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
+    driver = webdriver.Chrome(service=service, options=options,chrome_options=opt)
     while total_num + 1 > 0:
         query_id_data = {
             'token': token,
