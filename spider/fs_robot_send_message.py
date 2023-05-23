@@ -1,5 +1,6 @@
 import json
 import logging
+from datetime import datetime
 
 import requests
 from requests_toolbelt import MultipartEncoder
@@ -43,3 +44,16 @@ def send(msg,chatId,authorization):
     response = requests.request("POST", url, params=params, headers=headers, data=payload)
     status = response.headers['X-Tt-Logid']
     print(response.content)
+
+def get_string_data():
+    now_time = datetime.now().date()
+    date_str = str(now_time);
+    data_string = date_str.replace('-', '_', 3)
+    return data_string
+
+def get_chat(json_file):
+    with open(json_file, 'r', encoding='utf-8') as fp:
+        data = json.load(fp)
+        print(data)
+        chat_id = data['chat_id']
+        return chat_id

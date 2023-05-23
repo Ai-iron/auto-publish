@@ -6,7 +6,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
 
 from spider.byweixin import login_wechat, get_file_name, csv_head, get_content
-from spider.fs_robot_send_message import upload, send
+from spider.fs_robot_send_message import upload, send, get_string_data, get_chat
 from spider.token import get_token
 
 
@@ -34,32 +34,26 @@ def task_job():
 
     path = os.path.dirname(os.getcwd()) + "\\file"
 
-    now_time = datetime.now().date()
-    date_str = str(now_time);
-    data_string = date_str.replace('-', '_', 3)
-
+    data_string = get_string_data()
     token_data = get_token()
     token_json = json.loads(token_data)
     authorization = token_json['tenant_access_token']
 
     json_file = os.path.dirname(os.getcwd()) + "\\config\\authorization.json"
-    with open(json_file, 'r', encoding='utf-8') as fp:
-        data = json.load(fp)
-        print(data)
-        chat_id = data['chat_id']
+    chat_id = get_chat(json_file)
 
     file_list = []
 
     files = os.listdir(path)
     for f in files:
         if (data_string in f) and (f.endswith(".csv")):
-            file_list.append(path + "\\" + f);
+            file_list.append(path + "\\" + f)
             file_stream.name = os.path.basename(path + "\\" + f)
             file_stream.path = path + "\\" + f
-            file_key = upload(file_stream, authorization);
+            file_key = upload(file_stream, authorization)
             file_data = json.loads(file_key)
             message = file_data['data']['file_key']
-            send(message, chat_id, authorization);
+            send(message, chat_id, authorization)
 
     print(f'获取爬虫的cvs内容，并把文件发送到群的流程结束-------{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 
