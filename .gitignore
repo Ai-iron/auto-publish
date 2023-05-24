@@ -2,3 +2,5 @@
 /.idea/modules.xml
 /.idea/.gitignore
 /.idea/
+./build
+./dist
