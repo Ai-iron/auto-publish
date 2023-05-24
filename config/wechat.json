@@ -13,8 +13,8 @@
       {"name":""},
       {"name":""}
     ],
-    "xiaohongshu_admin": "ai",
-    "weixin_account_cookie": "./file/cookie1.txt"
+    "xiaohongshu_admin": "ou_0010dbb2fccb9a90ff4e9d1773b70bc4",
+    "weixin_account_cookie": "./file/cookie.txt"
   },
   {
     "xiaohongshu_name": "ai",
@@ -30,8 +30,8 @@
       {"name":"机器之心"},
       {"name":""}
     ],
-    "xiaohongshu_admin": "xxxx",
-    "weixin_account_cookie": "./file/cookie2.txt"
+    "xiaohongshu_admin": "ou_0010dbb2fccb9a90ff4e9d1773b70bc4",
+    "weixin_account_cookie": "./file/cookie.txt"
   },
   {
     "xiaohongshu_name": "上海本地",
@@ -47,8 +47,8 @@
       {"name":""},
       {"name":""}
     ],
-    "xiaohongshu_admin": "xxxx",
-    "weixin_account_cookie": "./file/cookie3.txt"
+    "xiaohongshu_admin": "ou_0010dbb2fccb9a90ff4e9d1773b70bc4",
+    "weixin_account_cookie": "./file/cookie.txt"
   },
   {
     "xiaohongshu_name": "厦门本地",
@@ -64,8 +64,8 @@
       {"name":""},
       {"name":""}
     ],
-    "xiaohongshu_admin": "xxxx",
-    "weixin_account_cookie": "./file/cookie4.txt"
+    "xiaohongshu_admin": "ou_0010dbb2fccb9a90ff4e9d1773b70bc4",
+    "weixin_account_cookie": "./file/cookie.txt"
   },
   {
     "xiaohongshu_name": "福州本地",
@@ -81,8 +81,8 @@
       {"name":"e福州"},
       {"name":"福州新闻"}
     ],
-    "xiaohongshu_admin": "xxxx",
-    "weixin_account_cookie": "./file/cookie5.txt"
+    "xiaohongshu_admin": "ou_0010dbb2fccb9a90ff4e9d1773b70bc4",
+    "weixin_account_cookie": "./file/cookie.txt"
   },
   {
     "xiaohongshu_name": "成都本地",
@@ -98,7 +98,7 @@
       {"name":"成都本地宝"},
       {"name":"四川文旅厅"}
     ],
-    "xiaohongshu_admin": "xxxx",
-    "weixin_account_cookie": "./file/cookie6.txt"
+    "xiaohongshu_admin": "ou_0010dbb2fccb9a90ff4e9d1773b70bc4",
+    "weixin_account_cookie": "./file/cookie.txt"
   }
 ]
