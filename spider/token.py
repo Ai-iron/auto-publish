@@ -1,6 +1,7 @@
 import requests
 import json
 
+
 def get_token():
     url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"
     payload = json.dumps({
@@ -9,16 +10,15 @@ def get_token():
     })
 
     headers = {
-      'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
     print(response.text)
-    return response.text
+    # todo redis 两个小时缓存复用
+    return json.loads(response.text)['tenant_access_token']
+
 
 if __name__ == '__main__':
     bb = get_token()
-    df = json.loads(bb)
-    authorization = df['tenant_access_token']
-    print(authorization)
-
+    print(bb)

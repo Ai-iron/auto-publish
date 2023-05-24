@@ -17,10 +17,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import uuid
+
 from PIL import Image
 
+import config
+from spider import fs_robot_send_message, token
+from spider.fs_robot_send_message import get_chat
+from spider.token import get_token
 
-def login_wechat(relogin, cookie_file_path):
+chatid = config.fs['chat_id']
+
+
+def login_wechat(relogin, cookie_file_path, warn_user):
     # 不重新登陆 存在cookie 直接用cookie
     if not relogin and os.path.exists(cookie_file_path):
         return
@@ -37,9 +45,10 @@ def login_wechat(relogin, cookie_file_path):
     WebDriverWait(browser, 100).until(EC.presence_of_element_located((By.CLASS_NAME, 'login_frame')))
     png_file = fr"./file/{uuid.uuid4()}.png"
     browser.find_element(By.CLASS_NAME, "login_frame").screenshot(png_file)
-    # todo 发飞书消息
     print("请拿手机扫码二维码登录公众号")
-    time.sleep(30)
+    fs_robot_send_message.send_post(png_file, chatid, token.get_token(), warn_user)
+    time.sleep(60)
+    os.remove(path=png_file)
     print("登录成功")
     # 获取cookies
     cookie_items = browser.get_cookies()
@@ -66,7 +75,7 @@ header = {
 def get_content(item):
     cookie_file_path = item['weixin_account_cookie']
     # 登陆获取cookie
-    login_wechat(False, cookie_file_path)
+    login_wechat(False, cookie_file_path, item['xiaohongshu_admin'])
     # 读取上一步获取到的cookies
     with open(cookie_file_path, 'r', encoding='utf-8') as f:
         cookie = f.read()
@@ -85,7 +94,7 @@ def get_content(item):
     try_times = 3
     while len(findall) == 0 and try_times > 0:
         print("登陆失效，请重新登陆")
-        login_wechat(True)
+        login_wechat(True, cookie_file_path, item['xiaohongshu_admin'])
         # 重新用cookie拿token
         with open(cookie_file_path, 'r', encoding='utf-8') as f:
             cookie = f.read()
@@ -105,9 +114,18 @@ def get_content(item):
     for account in item['gzh_list']:
         name = account['name']
         if name != "":
-            get_gzh_content(token, session, cookies, ky, file_name)
+            get_gzh_content(token, session, cookies, name, file_name)
+            print(f'获取爬虫的{account} cvs内容，并把文件发送到群的流程开始-------{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+            send_file_to_im(file_name)
+            print(f'获取爬虫的{account} cvs内容，并把文件发送到群的流程结束-------{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 
-    return
+
+# 发送csv文件到im通讯 现在发送到飞书
+def send_file_to_im(file_path):
+    authorization_token = get_token()
+    chat_id = config.fs['chat_id']
+    with open(file_path, 'r') as f:
+        fs_robot_send_message.send_file(f, chat_id, authorization_token)
 
 
 def get_gzh_content(token, session, cookies, ky, file_name):
@@ -174,13 +192,11 @@ def get_gzh_content(token, session, cookies, ky, file_name):
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
-
-    opt = webdriver.ChromeOptions()
-    opt.add_argument('--ignore-certificate-errors')
-    opt.add_argument('--ignore-ssl-errors')
+    options.add_argument('--ignore-certificate-errors')
+    options.add_argument('--ignore-ssl-errors')
     # 忽略无用的日志
-    opt.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
-    driver = webdriver.Chrome(service=service, options=options, chrome_options=opt)
+    options.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
+    driver = webdriver.Chrome(service=service, options=options)
     while total_num + 1 > 0:
         query_id_data = {
             'token': token,
@@ -232,7 +248,7 @@ def csv_head(file_name):
 
 # 存储csv
 def save(file_name, info):
-    csvFile = open(fr'./file/{file_name}.csv', 'a+', newline='', encoding='utf-8-sig')  # 设置newline，否则两行之间会空一行
+    csvFile = open(file_name, 'a+', newline='', encoding='utf-8-sig')  # 设置newline，否则两行之间会空一行
     writer = csv.writer(csvFile)
     writer.writerow(info)
     csvFile.close()
@@ -274,6 +290,10 @@ def is_current_date(publish_time_text):
     return publish_time.date() == now.date()
 
 
+# 按时间生成文件名
 def get_file_name(key):
     now_str = datetime.datetime.now().strftime("_%Y_%m_%d_%H_%M_%S")
-    return '今日文章_' + key + now_str
+    file_name = f'今日文章_{key}{now_str}.csv'
+    file_path = './file/' + file_name
+    absolute_path = os.path.abspath(file_path)
+    return absolute_path
