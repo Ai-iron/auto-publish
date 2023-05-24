@@ -115,9 +115,10 @@ def get_content(item):
         name = account['name']
         if name != "":
             get_gzh_content(token, session, cookies, name, file_name)
-            print(f'获取爬虫的{account} cvs内容，并把文件发送到群的流程开始-------{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
-            send_file_to_im(file_name)
-            print(f'获取爬虫的{account} cvs内容，并把文件发送到群的流程结束-------{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+
+    print(f'获取爬虫的{ky} cvs内容，并把文件发送到群的流程开始-------{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
+    send_file_to_im(file_name)
+    print(f'获取爬虫的{ky} cvs内容，并把文件发送到群的流程结束-------{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
 
 
 # 发送csv文件到im通讯 现在发送到飞书
