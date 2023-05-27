@@ -41,8 +41,11 @@ def login_wechat(relogin, cookie_file_path, warn_user):
     opt.add_experimental_option("excludeSwitches", ['enable-automation', 'enable-logging'])
     browser = webdriver.Chrome(chrome_options=opt)
     browser.get("https://mp.weixin.qq.com/")
-    # 等待页面加载完成
-    WebDriverWait(browser, 100).until(EC.presence_of_element_located((By.CLASS_NAME, 'login_frame')))
+    # 等待页面加载完成出二维码
+    r = WebDriverWait(browser, 100).until(lambda driver: image_src_has_value(driver, By.CLASS_NAME, "login__type__container__scan__qrcode"))
+    # 执行其他操作，比如获取图片属性等
+    # src = r.get_attribute('src')
+    # print('图片加载完成，src 值为:', src)
     png_file = fr"./file/{uuid.uuid4()}.png"
     browser.find_element(By.CLASS_NAME, "login_frame").screenshot(png_file)
     print("请拿手机扫码二维码登录公众号")
@@ -298,3 +301,13 @@ def get_file_name(key):
     file_path = './file/' + file_name
     absolute_path = os.path.abspath(file_path)
     return absolute_path
+
+
+# 自定义条件函数
+def image_src_has_value(driver,locator,v):
+    element = driver.find_element(locator, v)
+    src = element.get_attribute('src')
+    if src:
+        return element
+    else:
+        return False
