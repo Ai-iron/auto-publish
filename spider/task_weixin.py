@@ -6,7 +6,6 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime
 
 from spider.byweixin import login_wechat, get_file_name, csv_head, get_content
-from spider.fs_robot_send_message import upload, send_file, get_string_date, get_chat
 from spider.token import get_token
 
 
@@ -14,7 +13,7 @@ def task_job():
     print(f'定时任务在执行{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}')
     print(os.getcwd())
     # 读取JSON文件
-    with open('./config/wechat.json') as file:
+    with open('./config/wechat_test.json',encoding='utf-8') as file:
         weixin_conf = json.load(file)
 
     for item in weixin_conf:

@@ -22,7 +22,6 @@ from PIL import Image
 
 import config
 from spider import fs_robot_send_message, token
-from spider.fs_robot_send_message import get_chat
 from spider.token import get_token
 
 chatid = config.fs['chat_id']

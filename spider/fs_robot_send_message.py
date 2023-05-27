@@ -103,14 +103,20 @@ def get_string_date():
     return data_string
 
 
-def get_chat():
+def get_hour():
     #__file__ 是一个特殊的变量，它包含当前脚本的路径
-    path = os.path.abspath(os.path.dirname(__file__))
-    print(path)
-    json_file_path = os.path.join(path, 'config/authorization.json')
-    print(json_file_path)
-    with open(json_file_path, 'r', encoding='utf-8') as fp:
+    with open('./config/cros.json', 'r', encoding='utf-8') as fp:
         data = json.load(fp)
         print(data)
-        chat_id = data['chat_id']
-        return chat_id
+        hour = data['hour']
+        return hour
+
+def get_minute():
+    #__file__ 是一个特殊的变量，它包含当前脚本的路径
+    with open('./config/cros.json','r', encoding='utf-8') as fp:
+        data = json.load(fp)
+        print(data)
+        minute = data['minute']
+        return minute
+
+
