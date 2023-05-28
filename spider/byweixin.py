@@ -26,6 +26,8 @@ from spider.token import get_token
 
 chatid = config.fs['chat_id']
 
+from chatgpt import callChatGPTApi
+
 
 def login_wechat(relogin, cookie_file_path, warn_user):
     # 不重新登陆 存在cookie 直接用cookie
@@ -216,11 +218,12 @@ def get_gzh_content(token, session, cookies, ky, file_name):
         }
         print(fr'正在翻页：--------------{int(int(begin) / 5)}/{total_num}')
         # 3分钟
-        time.sleep(3 * 60)
+        time.sleep(2 * 60)
 
         # 获取每一页文章的标题和链接地址，并写入本地文本中
         query_fakeid_response = session.get(appmsg_url, cookies=cookies, headers=header, params=query_id_data)
         fakeid_list = query_fakeid_response.json().get('app_msg_list')
+        contents = []
         if fakeid_list:
             for item in fakeid_list:
                 content_link = item.get('link')
@@ -233,7 +236,11 @@ def get_gzh_content(token, session, cookies, ky, file_name):
                     print(fr'翻页结束：--------------今天内容收集完毕-{ky}')
                     break
                 info = [ky, content_title, content_link, content]
+                contents.append(content)
                 save(file_name, info)
+
+            if len(contents) > 0:
+                callChatGPTApi(contents, file_name[:-1]+"txt")
         else:
             break
         begin = int(begin)
